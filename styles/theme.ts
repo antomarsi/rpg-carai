@@ -1,14 +1,18 @@
 import { createTheme } from '@mui/material/styles';
-import { red } from '@mui/material/colors';
+import { red, deepPurple } from '@mui/material/colors';
 
 // Create a theme instance.
 const theme = createTheme({
   palette: {
+    mode: "dark",
     primary: {
-      main: '#556cd6',
+      main: deepPurple[400],
     },
     secondary: {
-      main: '#19857b',
+      main: '#64385e',
+    },
+    background: {
+      default: "#352F44"
     },
     error: {
       main: red.A400,

@@ -32,7 +32,8 @@ const googleAuthProvider = new GoogleAuthProvider()
 if (process.env.NODE_ENV === "development") {
   connectAuthEmulator(
     auth,
-    `http://localhost:${process.env.NEXT_PUBLIC_FIREBASE_EMU_AUTH_PORT || 9099}`
+    `http://localhost:${process.env.NEXT_PUBLIC_FIREBASE_EMU_AUTH_PORT || 9099}`,
+    { disableWarnings: true }
   );
   connectFirestoreEmulator(
     db,
