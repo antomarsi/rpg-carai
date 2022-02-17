@@ -16,9 +16,12 @@
     "@emotion/styled": "latest",
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
+    "firebase": "^9.6.6",
     "next": "latest",
+    "notistack": "^2.0.3",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "react-firebase-hooks": "^5.0.2"
   },
   "devDependencies": {
     "@types/node": "latest",
