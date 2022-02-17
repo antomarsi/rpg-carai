@@ -2,6 +2,7 @@
 import { initializeApp, getApps } from "firebase/app";
 import {
   getAuth,
+  GoogleAuthProvider,
   signInWithPopup,
   signOut,
   connectAuthEmulator,
@@ -24,8 +25,9 @@ if (!getApps().length) {
 }
 
 const auth = getAuth();
-const firestore = getFirestore();
+const db = getFirestore();
 const storage = getStorage();
+const googleAuthProvider = new GoogleAuthProvider()
 
 if (process.env.NODE_ENV === "development") {
   connectAuthEmulator(
@@ -33,7 +35,7 @@ if (process.env.NODE_ENV === "development") {
     `http://localhost:${process.env.NEXT_PUBLIC_FIREBASE_EMU_AUTH_PORT || 9099}`
   );
   connectFirestoreEmulator(
-    firestore,
+    db,
     "localhost",
     Number(process.env.NEXT_PUBLIC_FIREBASE_EMU_FIRESTORE_PORT) || 8080
   );
@@ -44,4 +46,4 @@ if (process.env.NODE_ENV === "development") {
   );
 }
 
-export { auth, firestore, storage };
+export { auth, db, storage, googleAuthProvider, signInWithPopup, signOut };

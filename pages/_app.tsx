@@ -7,6 +7,8 @@ import { CacheProvider, EmotionCache } from "@emotion/react";
 import theme from "../styles/theme";
 import createEmotionCache from "../styles/createEmotionCache";
 import { SnackbarProvider } from 'notistack';
+import { UserContext } from "../lib/context";
+import { useUserData } from "../lib/hooks";
 
 // Client-side cache, shared for the whole session of the user in the browser.
 const clientSideEmotionCache = createEmotionCache();
@@ -17,6 +19,8 @@ interface MyAppProps extends AppProps {
 
 export default function MyApp(props: MyAppProps) {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
+  const userData = useUserData()
+
   return (
     <CacheProvider value={emotionCache}>
       <Head>
@@ -25,9 +29,11 @@ export default function MyApp(props: MyAppProps) {
 
       <ThemeProvider theme={theme}>
         <SnackbarProvider maxSnack={3}>
-          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
-          <CssBaseline />
-          <Component {...pageProps} />
+          <UserContext.Provider value={userData}>
+            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+            <CssBaseline />
+            <Component {...pageProps} />
+          </UserContext.Provider>
         </SnackbarProvider>
       </ThemeProvider>
     </CacheProvider>
