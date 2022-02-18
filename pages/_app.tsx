@@ -31,7 +31,6 @@ export default function MyApp(props: MyAppProps) {
       <ThemeProvider theme={theme}>
         <SnackbarProvider maxSnack={3}>
           <UserContext.Provider value={userData}>
-            {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
             <CssBaseline />
             <Navbar />
             <Component {...pageProps} />

@@ -22,7 +22,9 @@
     "notistack": "^2.0.3",
     "react": "latest",
     "react-dom": "latest",
-    "react-firebase-hooks": "^5.0.2"
+    "react-draggable": "^4.4.4",
+    "react-firebase-hooks": "^5.0.2",
+    "react-flow-renderer": "^9.7.4"
   },
   "devDependencies": {
     "@types/node": "latest",
