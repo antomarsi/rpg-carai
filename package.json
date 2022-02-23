@@ -1,39 +1,114 @@
 {
-  "name": "nextjs-with-typescript",
-  "version": "5.0.0",
-  "private": true,
+  "name": "rpg-carai",
+  "productName": "rpg-carai",
+  "version": "1.0.0",
+  "description": "My Electron application description",
+  "main": ".webpack/main",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "post-update": "echo \"codesandbox preview only, need an update\" && yarn upgrade --latest",
-    "emulate": "firebase emulators:start"
+    "dev": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint --ext .ts,.tsx .",
+    "emulators": "firebase emulators:start"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Antônio Marco da Silva",
+    "email": "antomarsi@hotmail.com"
+  },
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "rpg_carai"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ],
+      "plugins": [
+        [
+          "@electron-forge/plugin-webpack",
+          {
+            "mainConfig": "./webpack.main.config.js",
+            "renderer": {
+              "config": "./webpack.renderer.config.js",
+              "nodeIntegration": true,
+              "contextIsolation": false,
+              "entryPoints": [
+                {
+                  "html": "./src/index.html",
+                  "js": "./src/renderer.ts",
+                  "name": "main_window"
+                },
+                {
+                  "html": "./src/splash.html",
+                  "js": "./src/splash_renderer.ts",
+                  "name": "splash_screen"
+                }
+              ]
+            }
+          }
+        ]
+      ]
+    }
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0-beta.63",
+    "@electron-forge/maker-deb": "^6.0.0-beta.63",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.63",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
+    "@electron-forge/maker-zip": "^6.0.0-beta.63",
+    "@electron-forge/plugin-webpack": "6.0.0-beta.63",
+    "@types/react": "^17.0.39",
+    "@types/react-dom": "^17.0.11",
+    "@types/react-lottie": "^1.2.6",
+    "@types/uuid": "^8.3.4",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "@vercel/webpack-asset-relocator-loader": "1.7.0",
+    "css-loader": "^6.0.0",
+    "electron": "17.0.1",
+    "eslint": "^8.0.1",
+    "eslint-plugin-import": "^2.25.0",
+    "fork-ts-checker-webpack-plugin": "^6.0.1",
+    "node-loader": "^2.0.0",
+    "style-loader": "^3.0.0",
+    "ts-loader": "^9.2.2",
+    "typescript": "~4.5.4"
   },
   "dependencies": {
-    "@emotion/cache": "latest",
     "@emotion/react": "latest",
-    "@emotion/server": "latest",
     "@emotion/styled": "latest",
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
-    "firebase": "^9.6.6",
-    "next": "latest",
+    "electron-squirrel-startup": "^1.0.0",
     "notistack": "^2.0.3",
-    "react": "latest",
-    "react-dom": "latest",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "react-draggable": "^4.4.4",
-    "react-firebase-hooks": "^5.0.2",
     "react-flow-renderer": "^9.7.4",
     "react-hotkeys-hook": "^3.4.4",
+    "react-lottie": "^1.2.3",
+    "react-router-dom": "^6.2.1",
+    "typeface-roboto": "^1.1.13",
     "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "@types/node": "latest",
-    "@types/react": "latest",
-    "@types/uuid": "^8.3.4",
-    "eslint": "latest",
-    "eslint-config-next": "latest",
-    "typescript": "latest"
   }
 }
