@@ -5,25 +5,32 @@ import Box from "@mui/material/Box";
 import ServerList from "../components/ServerList";
 import { styled } from "@mui/system";
 import { CircularProgress } from "@mui/material";
-import { Home } from "@mui/icons-material";
+import { Home, ViewAgenda } from "@mui/icons-material";
+import HomePage from "./HomePage";
+import EditorPage from "./EditorPage";
 
 const PageContentBox = styled(Box)({
   gridArea: "PC",
 });
 
 export interface RouteItem {
-    path: string;
-    content: React.ReactNode;
-    icon: React.ReactNode;
-    isHome?: boolean
+  path: string;
+  content: React.ReactNode;
+  icon: React.ReactNode;
+  isHome?: boolean;
 }
 
 const routes: RouteItem[] = [
   {
     path: "/",
-    content: <Box></Box>,
+    content: <HomePage />,
     icon: <Home />,
-    isHome: true
+    isHome: true,
+  },
+  {
+    path: "/editor",
+    content: <EditorPage />,
+    icon: <ViewAgenda />,
   },
 ];
 
@@ -38,11 +45,12 @@ const Loading: React.FC = () => {
 const Routes: React.FC = () => {
   return (
     <HashRouter>
-      <ServerList />
+      <ServerList items={routes} />
       <ReactRoutes>
-        {routes.map((r) => (
+        {routes.map((r, index) => (
           <Route
-            path="/"
+            key={index}
+            path={r.path}
             element={
               <React.Suspense fallback={<Loading />}>
                 <PageContentBox>{r.content}</PageContentBox>

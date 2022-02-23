@@ -2,23 +2,29 @@ import { Home } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import React from "react";
 import { grey, blue, purple, red } from "@mui/material/colors";
+import { NavLink } from "react-router-dom";
 
 export interface Props {
-  selected?: boolean;
   isHome?: boolean;
   hasNotifications?: boolean;
   mentions?: number;
+  icon: React.ReactNode;
+  to: string;
 }
 
 const ServerButton: React.FC<Props> = ({
   isHome,
   hasNotifications,
   mentions,
-  selected,
+  icon,
+  to,
 }) => {
   return (
     <Box
+      component={NavLink}
+      to={to}
       sx={{
+        color: "white",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -29,9 +35,12 @@ const ServerButton: React.FC<Props> = ({
         backgroundColor: isHome ? "primary.main" : grey[600],
         cursor: "pointer",
         position: "relative",
-        borderRadius: selected || isHome ? "16px" : "100%",
+        borderRadius: isHome ? "16px" : "100%",
+        "&.active": {
+          borderRadius: "16px"
+        },
         transition: "border-radius .2s , background-color .2s",
-        "&::hover": {
+        "&:hover": {
           borderRadius: "16px",
           backgroundColor: isHome ? purple[600] : blue[400],
         },
@@ -65,7 +74,7 @@ const ServerButton: React.FC<Props> = ({
         },
       }}
     >
-      {isHome && <Home />}
+      {icon}
     </Box>
   );
 };

@@ -1,10 +1,14 @@
 import Box from "@mui/material/Box";
 import { grey } from "@mui/material/colors";
 import React from "react";
-import ServerButton from './ServerButton';
-import {RouteItem} from '../pages/routes'
+import ServerButton from "./ServerButton";
+import { RouteItem } from "../../pages/routes";
 
-const ServerList: React.FC<{items: RouteItem}> = () => {
+interface Props {
+  items: RouteItem[];
+}
+
+const ServerList: React.FC<Props> = ({ items }) => {
   return (
     <Box
       sx={{
@@ -20,21 +24,23 @@ const ServerList: React.FC<{items: RouteItem}> = () => {
         },
       }}
     >
-      {items.map(item => {
+      {items.map((item) => {
         if (item.isHome) {
-          return <React.Fragment key={item.path}>
-            <ServerButton isHome />
-      <Box
-        sx={{
-          minWidth: "32px",
-          minHeight: "2px",
-          background: grey[600],
-          mb: "8px",
-        }}
-      />
-          </React.Fragment>
+          return (
+            <React.Fragment key={item.path}>
+              <ServerButton icon={item.icon} isHome to={item.path} />
+              <Box
+                sx={{
+                  minWidth: "32px",
+                  minHeight: "2px",
+                  background: grey[600],
+                  mb: "8px",
+                }}
+              />
+            </React.Fragment>
+          );
         }
-        return <ServerButton key={item.path}/>
+        return <ServerButton key={item.path} icon={item.icon} to={item.path} />;
       })}
     </Box>
   );
