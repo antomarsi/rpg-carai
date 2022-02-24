@@ -455,7 +455,7 @@ export const GlobalProvider: React.FC<
         .map(([key]) => String(key));
       if (
         nonOptionalInputs.length >
-          Object.keys(inputData).length + filteredEdges.length ||
+        Object.keys(inputData).length + filteredEdges.length ||
         emptyInputs.length > 0
       ) {
         // Grabs all the indexes of the inputs that the connections are targeting
