@@ -1,99 +1,125 @@
+import { Box, Stack } from "@mui/material";
 import React from "react";
 import ReactFlow, {
-    addEdge,
+  addEdge,
   Background,
   Connection,
   ConnectionMode,
   Controls,
   Edge,
+  EdgeTypesType,
   Elements,
   MiniMap,
   OnConnectFunc,
   OnEdgeUpdateFunc,
   Position,
+  ReactFlowProvider,
   updateEdge,
 } from "react-flow-renderer";
+import { GlobalProvider } from "./helpers/GlobalNodeState";
+import { Split } from "@geoffcox/react-splitter";
+import CustomEdge from "./helpers/CustomEdge";
+import ReactFlowBox from "./ReactFlowBox";
+import NodeSelector from "./NodeSelector";
+import { useWindowSize } from '@react-hook/window-size';
+import { createNodeTypes } from "./helpers/createNodeTypes";
 
-const nodeTypes = {
-//  selectorNode: ColorSelectorNode,
-};
-
-const initialElements: Elements<any> = [
+const testData = [
   {
-    id: "1",
-    type: "input",
-    data: { label: "An input node" },
-    position: { x: 0, y: 50 },
-    sourcePosition: Position.Right,
-  },
-  {
-    id: "2",
-    type: "selectorNode",
-    data: { onChange: () => {}, color: "#FFF" },
-    style: { border: "1px solid #777", padding: 10 },
-    position: { x: 300, y: 50 },
-  },
-  {
-    id: "3",
-    type: "output",
-    data: { label: "Output A" },
-    position: { x: 650, y: 25 },
-    targetPosition: Position.Left,
-  },
-  {
-    id: "4",
-    type: "output",
-    data: { label: "Output B" },
-    position: { x: 650, y: 100 },
-    targetPosition: Position.Left,
-  },
-
-  {
-    id: "e1-2",
-    source: "1",
-    target: "2",
-    animated: true,
-    style: { stroke: "#fff" },
-  },
-  {
-    id: "e2a-3",
-    source: "2",
-    target: "3",
-    sourceHandle: "a",
-    animated: true,
-    style: { stroke: "#fff" },
-  },
-  {
-    id: "e2b-4",
-    source: "2",
-    target: "4",
-    sourceHandle: "b",
-    animated: true,
-    style: { stroke: "#fff" },
-  },
+      "category": "Math",
+      "nodes": [
+          {
+              "name": "Sum",
+              "inputs": [
+                  {
+                      "type": "number::any",
+                      "label": "Value 1",
+                      "min": 0,
+                      "def": 0
+                  },
+                  {
+                      "type": "number::any",
+                      "label": "Value 2",
+                      "min": 0,
+                      "def": 0
+                  },
+              ],
+              "outputs": [
+                  {
+                      "type": "number::any",
+                      "label": "Result"
+                  }
+              ],
+              "description": "Sum 2 numbers"
+          },
+          {
+              "name": "Multiply",
+              "inputs": [
+                {
+                    "type": "number::any",
+                    "label": "Value 1",
+                    "min": 0,
+                    "def": 0
+                },
+                {
+                    "type": "number::any",
+                    "label": "Value 2",
+                    "min": 0,
+                    "def": 0
+                },
+              ],
+              "outputs": [
+                  {
+                      "type": "number::any",
+                      "label": "Result"
+                  }
+              ],
+              "description": "Multiply 2 numbers"
+          }
+      ]
+  }
 ];
 
-const NodeEngine: React.FC = () => {
-  const [elements, setElements] = React.useState(initialElements);
+const edgeTypes : EdgeTypesType = {
+  main: CustomEdge,
+};
 
-  const onEdgeUpdate: OnEdgeUpdateFunc = (oldEdge, newConnection) =>
-    setElements((els) => updateEdge(oldEdge, newConnection, els));
-  const onConnect =  (params: Edge | Connection) =>
-    setElements((els) => addEdge(params, els));
+const NodeEngine: React.FC = () => {
+  const reactFlowWrapper = React.useRef(null);
+  const [nodeTypes, setNodeTypes] = React.useState(createNodeTypes(testData));
+  const [width, height] = useWindowSize();
 
   return (
-    <ReactFlow
-      elements={elements}
-      snapToGrid
-      snapGrid={[16, 16]}
-      nodeTypes={nodeTypes}
-      onEdgeUpdate={onEdgeUpdate}
-      onConnect={onConnect}
-    >
-      <Background color={"#FFF000"} gap={16} />
-      <Controls />
-      <MiniMap />
-    </ReactFlow>
+    <ReactFlowProvider>
+      <GlobalProvider nodeTypes={nodeTypes}>
+        <Stack
+          direction="row"
+          component={Split}
+          sx={{
+            display: "flex",
+            width: "100%",
+            height: "100%",
+          }}
+          initialPrimarySize="565px"
+          minPrimarySize="290px"
+          minSecondarySize="50%"
+          splitterSize="10px"
+          defaultSplitterColors={{
+            color: "#71809633",
+            hover: "#71809666",
+            drag: "#718096EE",
+          }}
+        >
+          <NodeSelector data={testData} height={height} />
+          <ReactFlowBox
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            className="reactflow-wrapper"
+            wrapperRef={reactFlowWrapper}
+          />
+        </Stack>
+      </GlobalProvider>
+    </ReactFlowProvider>
   );
 };
 

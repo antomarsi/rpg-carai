@@ -1,6 +1,6 @@
 export default (category: string| null) => {
   switch (category) {
-    case "OpenCV":
+    case "Math":
       return "#C53030";
     case "NumPy":
       return "#2B6CB0";

@@ -7,26 +7,60 @@ import React, {
   useState,
 } from "react";
 import {
-    Edge,
-    Elements,
+  Edge,
+  Elements,
   getOutgoers,
   isEdge,
   isNode,
   Node,
   NodeTypesType,
+  Connection,
   removeElements as rfRemoveElements,
   useZoomPanHelper,
+  XYPosition,
+  FlowElement,
 } from "react-flow-renderer";
 import { useHotkeys } from "react-hotkeys-hook";
 import { v4 as uuidv4 } from "uuid";
-import useLocalStorage from "./hooks/useLocalStorage.js";
-import useUndoHistory from "./hooks/useMultipleUndoHistory.js";
-import useSessionStorage from "./hooks/useSessionStorage.js";
-import { migrate } from "./migrations.js";
+import useLocalStorage from "./hooks/useLocalStorage";
+import useUndoHistory from "./hooks/useMultipleUndoHistory";
+import useSessionStorage from "./hooks/useSessionStorage";
+import { migrate } from "./migrations";
 
-export const GlobalContext = createContext<{
-  removeEdgeById?: (id: string) => void;
-}>({});
+type CreateNodeFunc = (node: {
+  type: string;
+  position: XYPosition;
+  data: any;
+}) => void;
+
+type ConnectionFunc = (connection: Connection) => void
+
+export interface GlobalContextType {
+  nodes: Node[];
+  edges: Edge[];
+  elements: Elements;
+  createNode: CreateNodeFunc;
+  createConnection: ConnectionFunc;
+  convertToUsableFormat: () => Record<string, any>
+  removeElements: (elements: Elements) => void
+  reactFlowInstance: any;
+  setReactFlowInstance: React.Dispatch<any>;
+  updateRfi: () => void;
+  isValidConnection: (connection: Connection) => boolean;
+  useInputData: (id: string, index: number) => any[];
+  useAnimateEdges: () => any[];
+  removeNodeById: (id: string) => void;
+  removeEdgeById: (id: string) => void;
+  useNodeLock: (id: any) => any[];
+  useNodeValidity: (id: string) => (string | boolean)[]
+  duplicateNode: (id: string) => void
+  clearNode: (id: string) => void
+  // setSelectedElements,
+  outlineInvalidNodes: (nodes: Node[]) => void;
+  unOutlineInvalidNodes: (nodes: Node[]) => void;
+}
+
+export const GlobalContext = createContext<GlobalContextType>({} as GlobalContextType);
 
 const createUniqueId = () => uuidv4();
 
@@ -56,24 +90,25 @@ export const GlobalProvider: React.FC<
     return output;
   };
 
-  const setStateFromJSON = (savedData, loadPosition = false) => {
+  const setStateFromJSON = (savedData: any, loadPosition = false) => {
     if (savedData) {
       const nodeTypesArr = Object.keys(nodeTypes);
       const validNodes =
         savedData.elements.filter(
-          (element) => isNode(element) && nodeTypesArr.includes(element.type)
+          (element: FlowElement) =>
+            isNode(element) && nodeTypesArr.includes(element.type)
         ) || [];
       setEdges([]);
       setNodes(validNodes);
       setEdges(
         savedData.elements
           .filter(
-            (element) =>
+            (element: FlowElement) =>
               isEdge(element) &&
-              validNodes.some((el) => el.id === element.target) &&
-              validNodes.some((el) => el.id === element.source)
+              validNodes.some((el: FlowElement) => el.id === element.target) &&
+              validNodes.some((el: FlowElement) => el.id === element.source)
           )
-          .map((edge) => ({
+          .map((edge: Edge) => ({
             ...edge,
             animated: false,
           })) || []
@@ -96,31 +131,13 @@ export const GlobalProvider: React.FC<
   useHotkeys("ctrl+shift+z", redo, {}, [reactFlowInstanceRfi, nodes, edges]);
   useHotkeys("ctrl+n", clearState, {}, []);
 
-  useEffect(() => {
-    if (!loadedFromCli) {
-      ipcRenderer.invoke("get-cli-open").then((contents) => {
-        if (contents) {
-          const { version, content } = contents;
-          if (version) {
-            const upgraded = migrate(version, content);
-            setStateFromJSON(upgraded, true);
-          } else {
-            // Legacy files
-            const upgraded = migrate(null, content);
-            setStateFromJSON(upgraded, true);
-          }
-        }
-      });
-    }
-  }, []);
-
   // Push state to undo history
   // useEffect(() => {
   //   push(dumpStateToJSON());
   // }, [nodeData, nodeLocks, reactFlowInstanceRfi, nodes, edges]);
 
   const convertToUsableFormat = () => {
-    const result = {};
+    const result: Record<string, any> = {};
 
     // Set up each node in the result
     nodes.forEach((element) => {
@@ -159,10 +176,11 @@ export const GlobalProvider: React.FC<
         type,
       } = element;
       // Connection
-      result[source].outputs[sourceHandle.split("-").slice(-1)] = {
+      console.log(sourceHandle, sourceHandle.split("-").slice(-1))
+      result[source].outputs[sourceHandle.split("-").slice(-1)[0]] = {
         id: targetHandle,
       };
-      result[target].inputs[targetHandle.split("-").slice(-1)] = {
+      result[target].inputs[targetHandle.split("-").slice(-1)[0]] = {
         id: sourceHandle,
       };
     });
@@ -180,27 +198,27 @@ export const GlobalProvider: React.FC<
 
   const removeElements = (elements: Elements) => {
     const removedElements = rfRemoveElements(elements, [...nodes, ...edges]);
-    setEdges(removedElements.filter((element) => isEdge(element)));
-    setNodes(removedElements.filter((element) => isNode(element)));
+    setEdges(removedElements.filter((element) => isEdge(element)) as Edge[]);
+    setNodes(removedElements.filter((element) => isNode(element)) as Node[]);
   };
 
   const removeNodeById = (id: string) => {
     const nodeToRemove = nodes.find((node) => node.id === id);
     const newElements = rfRemoveElements([nodeToRemove], [...nodes, ...edges]);
-    setEdges(newElements.filter((element) => isEdge(element)));
-    setNodes(newElements.filter((element) => isNode(element)));
+    setEdges(newElements.filter((element) => isEdge(element)) as Edge[]);
+    setNodes(newElements.filter((element) => isNode(element)) as Node[]);
   };
 
   const removeEdgeById = (id: string) => {
     const edgeToRemove = edges.find((node) => node.id === id);
     const newElements = rfRemoveElements([edgeToRemove], [...edges]);
-    setEdges(newElements.filter((element) => isEdge(element)));
+    setEdges(newElements.filter((element) => isEdge(element)) as Edge[]);
   };
 
-  const getInputDefaults = (nodeData:) => {
-    const defaultData = {};
+  const getInputDefaults = (nodeData: any) => {
+    const defaultData: Record<string, any> = {};
     if (nodeData.inputs) {
-      nodeData.inputs.forEach((input, i) => {
+      nodeData.inputs.forEach((input: any, i: number) => {
         if (input.def || input.def === 0) {
           defaultData[i] = input.def;
         } else if (input.default || input.default === 0) {
@@ -213,19 +231,25 @@ export const GlobalProvider: React.FC<
     return defaultData;
   };
 
-  const createNode = ({ type, position, data }) => {
+  const createNode: CreateNodeFunc = ({ type, position, data }) => {
     const id = createUniqueId();
-    const newNode = {
+    const newNode: Node = {
       type,
       id,
       position,
       data: { ...data, id, inputData: getInputDefaults(data) },
     };
+    console.log(newNode)
     setNodes([...nodes, newNode]);
     return id;
   };
 
-  const createConnection = ({ source, sourceHandle, target, targetHandle }) => {
+  const createConnection: ConnectionFunc = ({
+    source,
+    sourceHandle,
+    target,
+    targetHandle,
+  }: Connection) => {
     const id = createUniqueId();
     const newEdge = {
       id,
@@ -277,7 +301,7 @@ export const GlobalProvider: React.FC<
     targetHandle,
     source,
     sourceHandle,
-  }) => {
+  }: Connection) => {
     if (source === target) {
       return false;
     }
@@ -290,7 +314,7 @@ export const GlobalProvider: React.FC<
     const sourceOutput = sourceNode.data.outputs[sourceHandleIndex];
     const targetInput = targetNode.data.inputs[targetHandleIndex];
 
-    const checkTargetChildren = (parentNode) => {
+    const checkTargetChildren = (parentNode: Node): any => {
       const targetChildren = getOutgoers(parentNode, [...nodes, ...edges]);
       if (!targetChildren.length) {
         return false;
@@ -307,8 +331,8 @@ export const GlobalProvider: React.FC<
     return sourceOutput.type === targetInput.type && !isLoop;
   };
 
-  const useInputData = (id:string, index: number) => {
-    const nodeById = nodes.find((node) => node.id === id) ?? {};
+  const useInputData = (id: string, index: number) => {
+    const nodeById = nodes.find((node) => node.id === id) ?? { data: {} };
     const nodeData = nodeById?.data;
 
     if (!nodeData) {
@@ -321,7 +345,7 @@ export const GlobalProvider: React.FC<
     }
 
     const inputDataByIndex = inputData[index];
-    const setInputData = (data) => {
+    const setInputData = (data: any) => {
       const nodeCopy = { ...nodeById };
       if (nodeCopy && nodeCopy.data) {
         nodeCopy.data.inputData = {
@@ -329,8 +353,8 @@ export const GlobalProvider: React.FC<
           [index]: data,
         };
       }
-      const filteredNodes = nodes.filter((n) => n.id !== id);
-      setNodes([...filteredNodes, nodeCopy]);
+      const filteredNodes = nodes.filter((n) => n.id !== id) as Node[];
+      setNodes([...filteredNodes, nodeCopy as Node]);
     };
     return [inputDataByIndex, setInputData];
   };
@@ -354,7 +378,7 @@ export const GlobalProvider: React.FC<
       );
     };
 
-    const completeEdges = (finished) => {
+    const completeEdges = (finished: string[]) => {
       setEdges(
         edges.map((edge) => {
           const complete = finished.includes(edge.source);
@@ -407,7 +431,7 @@ export const GlobalProvider: React.FC<
   );
 
   const useNodeValidity = useCallback(
-    (id) => {
+    (id: string) => {
       // console.log('perf check (node validity)');
       // This should never happen, but I'd rather not have this function crash if it does
       const node = nodes.find((n) => n.id === id);
@@ -423,7 +447,7 @@ export const GlobalProvider: React.FC<
       const filteredEdges = edges.filter((e) => e.target === id);
       // Check to make sure the node has all the data it should based on the schema.
       // Compares the schema against the connections and the entered data
-      const nonOptionalInputs = inputs.filter((input) => !input.optional);
+      const nonOptionalInputs = inputs.filter((input: any) => !input.optional);
       const emptyInputs = Object.entries(inputData)
         .filter(
           ([, value]) => value === "" || value === undefined || value === null
@@ -440,7 +464,7 @@ export const GlobalProvider: React.FC<
           .map((edge) => edge.targetHandle.split("-").slice(-1)[0]);
         // Grab all inputs that do not have data or a connected edge
         const missingInputs = nonOptionalInputs.filter(
-          (input, i) =>
+          (input: any, i: number) =>
             !Object.keys(inputData).includes(String(i)) &&
             !edgeTargetIndexes.includes(String(i))
         );
@@ -448,7 +472,7 @@ export const GlobalProvider: React.FC<
         return [
           false,
           `Missing required input data: ${missingInputs
-            .map((input) => input.label)
+            .map((input: any) => input.label)
             .join(", ")}`,
         ];
       }
@@ -505,14 +529,14 @@ export const GlobalProvider: React.FC<
 
   const contextValue = useMemo(
     () => ({
-      nodes,
-      edges,
+      nodes: nodes,
+      edges: edges,
       elements: [...nodes, ...edges],
       createNode,
       createConnection,
       convertToUsableFormat,
       removeElements,
-      reactFlowInstance,
+      reactFlowInstance: reactFlowInstance,
       setReactFlowInstance,
       updateRfi,
       isValidConnection,
@@ -528,7 +552,7 @@ export const GlobalProvider: React.FC<
       outlineInvalidNodes,
       unOutlineInvalidNodes,
     }),
-    [nodes, edges]
+    [nodes, edges, reactFlowInstance]
   );
 
   return (

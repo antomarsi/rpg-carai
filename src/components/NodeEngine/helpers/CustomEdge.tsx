@@ -6,12 +6,12 @@ import {
   getMarkerEnd,
 } from "react-flow-renderer";
 import getNodeAccentColors from "./getNodeAccentColors";
-import { GlobalContext } from "./GlobalNodeState.jsx";
-import shadeColor from "./shadeColor.js";
+import shadeColor from "./shadeColor";
 import Box from "@mui/material/Box";
 import { grey } from "@mui/material/colors";
 import { IconButton } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { GlobalContext } from "./GlobalNodeState";
 
 const CustomEdge: React.FC<EdgeProps> = ({
   id,
