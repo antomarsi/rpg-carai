@@ -12,15 +12,10 @@ export default function App() {
   });
   const { player, character, setSelectedCharacter } = useContext(PlayerContext)
 
-  if (!character) {
-    return <Box>
-    </Box>
-  }
-
   return (
     <Box
       sx={{
-        width: "100%"
+        width: "100%",
       }}
     >
       <SelectCharacterDialog open={!character} characters={player.characters} onClose={setSelectedCharacter} />

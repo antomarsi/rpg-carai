@@ -1,17 +1,19 @@
-class Character {
-    
-    id: string
-    name: string
-    strenght: number
-    wisdom: number
+import { Attributes } from './Attributes';
+class Character implements Attributes{
+  id: string;
+  name: string;
 
-    constructor(id: string, name: string, strenght: number, wisdom: number) {
-        this.id = id
-        this.name = name
-        this.strenght = strenght
-        this.wisdom = wisdom
-    }
+  strength: number;
+  dexterity: number;
+  agility: number;
+  intelligence: number;
+  astuteness: number;
 
+  constructor(id: string, name: string) {
+    this.id = id;
+    this.name = name;
+  }
 }
 
-export default Character
+
+export default Character;

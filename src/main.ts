@@ -59,7 +59,7 @@ const doSplashScreenChecks = async () =>
       webPreferences: {
         webSecurity: false,
         nativeWindowOpen: true,
-        nodeIntegration: true,
+        nodeIntegration: false,
         contextIsolation: false,
       },
       // icon: `${__dirname}/public/icons/cross_platform/icon`,
