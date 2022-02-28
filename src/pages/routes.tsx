@@ -1,5 +1,5 @@
 import React from "react";
-import { HashRouter, Routes as ReactRoutes, Route } from "react-router-dom";
+import { BrowserRouter, Routes as ReactRoutes, Route } from "react-router-dom";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import ServerList from "../components/ServerList";
@@ -44,7 +44,7 @@ const Loading: React.FC = () => {
 
 const Routes: React.FC = () => {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <ServerList items={routes} />
       <ReactRoutes>
         {routes.map((r, index) => (
@@ -67,7 +67,7 @@ const Routes: React.FC = () => {
           }
         />
       </ReactRoutes>
-    </HashRouter>
+    </BrowserRouter>
   );
 };
 

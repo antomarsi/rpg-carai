@@ -5,11 +5,10 @@
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
-    "dev": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make",
-    "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx .",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
     "emulators": "firebase emulators:start"
   },
   "keywords": [],
@@ -17,96 +16,25 @@
     "name": "Antônio Marco da Silva",
     "email": "antomarsi@hotmail.com"
   },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
   "license": "MIT",
-  "config": {
-    "forge": {
-      "packagerConfig": {},
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "rpg_carai"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        }
-      ],
-      "plugins": [
-        [
-          "@electron-forge/plugin-webpack",
-          {
-            "devServer": {
-              "liveReload": false,
-              "hot": true
-            },
-            "mainConfig": "./webpack.main.config.js",
-            "renderer": {
-              "config": "./webpack.renderer.config.js",
-              "nodeIntegration": true,
-              "contextIsolation": false,
-              "entryPoints": [
-                {
-                  "html": "./src/index.html",
-                  "js": "./src/renderer.ts",
-                  "name": "main_window"
-                },
-                {
-                  "html": "./src/splash.html",
-                  "js": "./src/splash_renderer.ts",
-                  "name": "splash_screen"
-                }
-              ]
-            }
-          }
-        ]
-      ]
-    }
-  },
-  "devDependencies": {
-    "@electron-forge/cli": "^6.0.0-beta.63",
-    "@electron-forge/maker-deb": "^6.0.0-beta.63",
-    "@electron-forge/maker-rpm": "^6.0.0-beta.63",
-    "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
-    "@electron-forge/maker-zip": "^6.0.0-beta.63",
-    "@electron-forge/plugin-webpack": "6.0.0-beta.63",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.4",
-    "@types/react": "^17.0.39",
-    "@types/react-dom": "^17.0.11",
-    "@types/react-lottie": "^1.2.6",
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "@typescript-eslint/parser": "^5.0.0",
-    "@vercel/webpack-asset-relocator-loader": "1.7.0",
-    "css-loader": "^6.0.0",
-    "electron": "17.0.1",
-    "eslint": "^8.0.1",
-    "eslint-plugin-import": "^2.25.0",
-    "fork-ts-checker-webpack-plugin": "^6.0.1",
-    "node-loader": "^2.0.0",
-    "react-refresh": "^0.11.0",
-    "react-refresh-typescript": "^2.0.3",
-    "style-loader": "^3.0.0",
-    "ts-loader": "^9.2.2",
-    "typescript": "~4.5.4"
-  },
   "dependencies": {
     "@emotion/react": "latest",
     "@emotion/styled": "latest",
     "@mui/icons-material": "latest",
     "@mui/material": "latest",
-    "electron-log": "^4.4.6",
-    "electron-squirrel-startup": "^1.0.0",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^16.7.13",
+    "@types/react": "^17.0.20",
+    "@types/react-dom": "^17.0.9",
     "firebase": "^9.6.7",
     "flume": "^0.6.3",
     "notistack": "^2.0.3",
@@ -115,6 +43,14 @@
     "react-firebase-hooks": "^5.0.3",
     "react-lottie": "^1.2.3",
     "react-router-dom": "^6.2.1",
-    "typeface-roboto": "^1.1.13"
+    "react-scripts": "5.0.0",
+    "typescript": "^4.4.2",
+    "web-vitals": "^2.1.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "eslint": "^8.10.0",
+    "eslint-plugin-react": "^7.29.2"
   }
 }
