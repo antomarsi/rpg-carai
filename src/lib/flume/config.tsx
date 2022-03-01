@@ -1,5 +1,4 @@
-import React from "react";
-import { FlumeConfig, Colors, Controls } from "flume";
+import { FlumeConfig } from "flume";
 import { ports, PortType } from "./ports";
 import { nodes, NodeType } from "./nodes";
 import { rootNodes } from './nodes/index';

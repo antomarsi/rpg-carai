@@ -29,6 +29,6 @@ const resolveNodes: resolveNodesFn<NodeType, PortType> = (node, inputValues, nod
 }
 
 
-const engine = new RootEngine(config, resolvePorts, resolveNodes)
+const engine = new RootEngine<NodeType, PortType, any>(config, resolvePorts, resolveNodes)
 
 export default engine

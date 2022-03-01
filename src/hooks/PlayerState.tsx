@@ -20,7 +20,7 @@ testPlayer.characters = [
 
 export const PlayerContext = createContext<PlayerContextProps>({} as PlayerContextProps)
 
-export const PlayerProvider: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
+export const PlayerProvider: React.FC<React.PropsWithChildren<unknown>> = ({ children }) => {
 
     const [player, setPlayer] = React.useState<Player>(testPlayer)
     const [character, setCharacter] = React.useState<Character>()

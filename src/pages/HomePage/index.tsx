@@ -11,19 +11,16 @@ const HomePage: React.FC = () => {
   return <Box>
 
     <Typography>
-      Player: {player.name} [{player.id}]
+      Player: {player?.name} [{player?.id}]
     </Typography>
     <Typography>
-      Character: {character.name} [{character.id}]
+      Character: {character?.name} [{character?.id}]
     </Typography>
     <Typography>
-      Forca: {character.strength}
+      Forca: {character?.strength}
     </Typography>
     <Typography>
-      Inteligência: {character.intelligence}
-    </Typography>
-    <Typography>
-      key: {process.env.NEXT_PUBLIC_FIREBASE_API_KEY}
+      Inteligência: {character?.intelligence}
     </Typography>
   </Box>;
 };

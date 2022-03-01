@@ -42,24 +42,24 @@ declare module "flume" {
     setValue?: ControlSetValueFn<V>;
   }
 
-  interface TextControl extends Control {
+  interface TextControl extends Control<string> {
     type: "text";
     placeholder?: string; // FixMe doesnt work for now
     defaultValue: string;
   }
 
-  interface NumberControl extends Control {
+  interface NumberControl extends Control<number> {
     type: "number";
     defaultValue: number;
     step?: number;
   }
 
-  interface CheckboxControl extends Control {
+  interface CheckboxControl extends Control<boolean> {
     type: "checkbox";
     defaultValue: boolean;
   }
 
-  interface SelectControl extends Control {
+  interface SelectControl extends Control<string> {
     type: "select";
     getOptions?: () => void; // TODO: type
     placeholder?: string;
@@ -67,7 +67,7 @@ declare module "flume" {
     defaultValue: string;
   }
 
-  interface MultiSelectControl extends Control {
+  interface MultiSelectControl extends Control<string[]> {
     type: "multiselect";
     getOptions?: () => void; // TODO: type
     placeholder?: string;
@@ -75,7 +75,7 @@ declare module "flume" {
     defaultValue: string[];
   }
 
-  interface CustomControl<V> extends Control {
+  interface CustomControl<V> extends Control<V> {
     type: "custom";
     defaultValue: V;
     render: CustomControlRenderFn<V>;
@@ -121,7 +121,7 @@ declare module "flume" {
     function number(config: NumberControlConfig): NumberControl;
     function checkbox(config: CheckboxControlConfig): CheckboxControl;
     function multiselect(config: MultiSelectControlConfig): MultiSelectControl;
-    function custom<V>(config: CustomControlConfig<V>): CustomControl;
+    function custom<V>(config: CustomControlConfig<V>): CustomControl<V>;
   }
 
   interface PortProps<V> {
@@ -140,7 +140,7 @@ declare module "flume" {
     color?: string;
     acceptTypes?: P[];
     hidePort?: boolean;
-    controls?: Control[];
+    controls?: Control<any>[];
   }
 
   interface Port {
@@ -148,7 +148,7 @@ declare module "flume" {
   }
 
   type GetPortsFn<P> = (
-    ports: Record<P, (port?: Partial<PortConfig<P>>) => Port>
+    ports: Record<string, (port?: Partial<PortConfig<P>>) => Port>
   ) => Port;
 
   export interface NodeConfig<N, P> {
@@ -166,16 +166,16 @@ declare module "flume" {
   }
 
   export interface FlumePlainConfig<P, N> {
-    nodeTypes: Record<N, NodeConfig>;
-    portTypes: Record<P, PortConfig>;
+    nodeTypes: Record<string, NodeConfig<N, P>>;
+    portTypes: Record<string, PortConfig<P>>;
   }
 
   export class FlumeConfig<P = keyof {}, N = keyof {}>
     implements FlumePlainConfig<P, N>
   {
     constructor(config?: FlumePlainConfig<P, N>);
-    nodeTypes: Record<N, NodeConfig<N, P>>;
-    portTypes: Record<P, PortConfig<P>>;
+    nodeTypes: Record<string, NodeConfig<N, P>>;
+    portTypes: Record<string, PortConfig<P>>;
     addRootNodeType(config: NodeConfig<N, P>): this;
     addNodeType(config: NodeConfig<N, P>): this;
     removeNodeType(type: N): this;
